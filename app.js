@@ -38,7 +38,7 @@ app.use(express.static('./public'));
 
 // Routes -------------------------------------------------------------------------------
 app.use('/api/v1/admin/dashboard', adminRouter); //add authMiddleware back
-app.use('/api/v1/admin/dashboard/products', adminProductRouter); //add authMiddleware back
+app.use('/api/v1/admin/dashboard/products', authMiddleware, adminProductRouter); //add authMiddleware back
 app.use('/api/v1/admin/dashboard/inventory', authMiddleware, adminInventoryRouter); //add authMiddleware back
 //app.use('/api/v1/admin/dashboard/employee', authMiddleware, adminEmployeeRouter);
 //app.use('/api/v1/admin/dashboard/supplier', authMiddleware, adminSupplierRouter);
