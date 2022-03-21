@@ -1,37 +1,36 @@
 const mongoose = require("mongoose");
 
 const SupplierSchema = new mongoose.Schema({
-  name: {
+    name: {
     type: String,
     required: [true, "Please enter a name for this supplier"],
-  },
+    },
   // products: {
   // 	type: Array,
   // 	required: [true, 'Please enter the supplier\'s products']
   // },
-  address: {
-    type: String,
-    required: [
-      true,
-      "Please enter supplier address, you can update later if needed",
-    ],
-    default: "Edit address here",
-    maxlength: 500,
-  },
-  contacts: {
-    type: String,
-    required: [
-      true,
-      "Please enter a contact for this supplier, you can update later if needed",
-    ],
-    default: "Edit contact here",
-    maxlength: 500,
-  },
-  notes: {
-    type: String,
-    default: "",
-    maxLength: 1000,
-  },
+    address: {
+        type: String,
+        required: [true, "Please enter supplier address, you can update later if needed"],
+        default: "Edit address here",
+        maxlength: 500,
+    },
+    contacts: {
+        type: String,
+        required: [true, "Please enter a contact for this supplier, you can update later if needed"],
+        default: "Edit contact here",
+        maxlength: 500,
+    },
+    notes: {
+        type: String,
+        default: "",
+        maxLength: 1000,
+     },
+    createdBy: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Admin',
+        required: [true, 'Please provide admin']
+    }
 });
 
 module.exports = mongoose.model("Supplier", SupplierSchema);

@@ -8,7 +8,7 @@ const adminRouter = require("./routes/admin-router");
 const adminProductRouter = require("./routes/admin-product-router");
 const adminInventoryRouter = require("./routes/admin-inventory-router");
 //const adminEmployeeRouter = require('./routes/admin-employee-router')
-//const adminSupplierRouter = require('./routes/admin-supplier-router')
+const adminSupplierRouter = require('./routes/admin-supplier-router')
 const productRouter = require("./routes/product-router");
 
 const notFoundMiddleware = require("./middleware/not-found");
@@ -39,7 +39,7 @@ app.use("/api/v1/admin/dashboard", adminRouter); //add authMiddleware back
 app.use("/api/v1/admin/dashboard/products", authMiddleware, adminProductRouter);
 app.use("/api/v1/admin/dashboard/inventory", authMiddleware, adminInventoryRouter);
 //app.use('/api/v1/admin/dashboard/employee', authMiddleware, adminEmployeeRouter);
-//app.use('/api/v1/admin/dashboard/supplier', authMiddleware, adminSupplierRouter);
+app.use('/api/v1/admin/dashboard/supplier', authMiddleware, adminSupplierRouter);
 app.use("/api/v1/admin", adminRouter);
 //app.use('/api/v1/employee/', authMiddleware, employeeRouter);
 app.use("/api/v1/products", productRouter);
