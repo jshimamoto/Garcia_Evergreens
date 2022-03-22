@@ -34,11 +34,11 @@ router.route('/:id')
 	})
 	.patch(async (req, res) => {
 		const {
-			body: {name, price, available, notes},
+			body: {name, available, notes},
 			admin: {adminID},
 			params: {id: productID}
 		} = req;
-		if (name === '' || available === '' || price === '') {
+		if (name === '' || available === '') {
 			throw new BadRequestError('Please fill out all required fields')
 		}
 		const product = await Product.findByIdAndUpdate(
