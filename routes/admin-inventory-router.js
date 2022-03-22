@@ -16,27 +16,18 @@ router.route("/")
     return res.status(StatusCodes.OK).json({ inventoryPosts });
   })
   .post(async (req, res) => {
+    console.log(req.body)
     req.body.createdBy = req.admin.adminID;
     
-    // const breakdown = req.body.breakdown
-    // const updateInventory = async (input) => {
-    // 		let item = input[i];
-    // 		let product = await Product.findById(input.product.id)
-    // 		console.log(product.name)
-    // 		product.inventory += item.qtyProcessed
-    // 		await product.save()
-    // }
-    // const updateInventory = async (input) => {
-    // 	for (let i = 0; i < input.length; i++) {
-    // 		let item = input[i];
-    // 		let product = await Product.findById(item.product.id)
-    // 		console.log(product.name)
-    // 		product.inventory += item.qtyProcessed
-    // 		await product.save()
-    // 	}
-    // }
+    const {productID, qtyProcessed} = req.body
+    const updateInventory = async (prodID, qtyProcess) => {
+    		let product = await Product.findById(prodID)
+    		console.log(product.name)
+    		product.inventory += qtyProcess
+    		await product.save()
+    }
 
-    // updateInventory(breakdown)
+    updateInventory(productID, qtyProcessed)
     const newInventoryPost = await InventoryPost.create(req.body);
     return res.status(StatusCodes.OK).json({ data: newInventoryPost, msg: "Successfully submitted" });
 });
@@ -55,12 +46,13 @@ router.route("/:id")
       body: {
         supplier,
         product,
+        productID,
         qtyReceived,
         qtyProcessed,
         lostProduct,
         premiumBoxes,
         basicBoxes,
-        notes,
+        notes
       },
       admin: { adminID },
       params: { id: inventoryID },
