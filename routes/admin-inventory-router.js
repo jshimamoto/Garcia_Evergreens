@@ -106,6 +106,7 @@ router.route("/:id")
         }
         return res.status(StatusCodes.OK).send("Inventory Post successfully removed");
     });
+    
 // .get(async (req, res) => {
 // 	return res.send('get admin inventory post')
 // })
