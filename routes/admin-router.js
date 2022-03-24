@@ -3,7 +3,7 @@ const router = express.Router();
 require('express-async-errors')
 
 const Admin = require('../models/Admin')
-const Product = require('../models/Product')
+const Employee = require('../models/Employee')
 const Order = require('../models/Order')
 const Quote = require('../models/Quote')
 
@@ -30,6 +30,24 @@ router.route('/')
 		}
 		const token = admin.createJWT();
 		return res.status(StatusCodes.OK).json({admin: {username: admin.username, id: admin._id}, token})
+	})
+
+router.route('/employee')
+    .post( async (req, res, next) => {
+		const {username, password} = req.body;
+		if (!username || !password) {
+			throw new BadRequestError('Please provide username and password');
+		}
+		const employee = await Employee.findOne({username})
+		if (!employee) {
+			throw new UnauthenticatedError('Invalid credentials')
+		}
+		const isPasswordCorrect = await employee.comparePassword(password)
+		if (!isPasswordCorrect) {
+			throw new UnauthenticatedError('Invalid credentials')
+		}
+		const token = employee.createJWT();
+		return res.status(StatusCodes.OK).json({employee: {username: employee.username, id: employee._id}, token})
 	})
 
 router.route('/register')

@@ -7,7 +7,7 @@ const cors = require("cors");
 const adminRouter = require("./routes/admin-router");
 const adminProductRouter = require("./routes/admin-product-router");
 const adminInventoryRouter = require("./routes/admin-inventory-router");
-//const adminEmployeeRouter = require('./routes/admin-employee-router')
+const adminEmployeeRouter = require('./routes/admin-employee-router')
 const adminSupplierRouter = require('./routes/admin-supplier-router')
 const productRouter = require("./routes/product-router");
 
@@ -19,10 +19,7 @@ require("dotenv").config();
 require("express-async-errors");
 
 // Retrieve Files ----------------------------------------------------------------------------
-//const homePage = readFileSync('./views/index.html');
 const app = express();
-// app.set("views", path.join(__dirname, "views"));
-// app.set("view engine", "ejs");
 // app.use(express.static('./public'))
 
 // Middleware -------------------------------------------------------------------------------
@@ -35,11 +32,11 @@ app.use(express.static("./public"));
 // Server -----------------------------------------------------------------------------------
 
 // Routes -------------------------------------------------------------------------------
-app.use("/api/v1/admin/dashboard", adminRouter); //add authMiddleware back
-app.use("/api/v1/admin/dashboard/products", authMiddleware, adminProductRouter);
-app.use("/api/v1/admin/dashboard/inventory", authMiddleware, adminInventoryRouter);
-//app.use('/api/v1/admin/dashboard/employee', authMiddleware, adminEmployeeRouter);
-app.use('/api/v1/admin/dashboard/supplier', authMiddleware, adminSupplierRouter);
+//app.use("/api/v1/admin/dashboard", adminRouter); //add authMiddleware back
+app.use("/api/v1/admin/products", authMiddleware, adminProductRouter);
+app.use("/api/v1/admin/inventory", authMiddleware, adminInventoryRouter);
+app.use('/api/v1/admin/employees', authMiddleware, adminEmployeeRouter);
+app.use('/api/v1/admin/supplier', authMiddleware, adminSupplierRouter);
 app.use("/api/v1/admin", adminRouter);
 //app.use('/api/v1/employee/', authMiddleware, employeeRouter);
 app.use("/api/v1/products", productRouter);
