@@ -40,7 +40,7 @@ router.route('/employee')
 		}
 		const employee = await Employee.findOne({username})
 		if (!employee) {
-			throw new UnauthenticatedError('Invalid credentials')
+			throw new UnauthenticatedError('Employee not found')
 		}
 		const isPasswordCorrect = await employee.comparePassword(password)
 		if (!isPasswordCorrect) {

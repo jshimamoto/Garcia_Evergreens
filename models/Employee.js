@@ -57,7 +57,7 @@ EmployeeSchema.pre('save', async function() {
 })
 
 EmployeeSchema.methods.createJWT = function() {
-	return jwt.sign({employeeID: this._id, username: this.username}, process.env.JWT_SECRET, {expiresIn: '1d'})
+	return jwt.sign({userID: this._id, username: this.username}, process.env.JWT_SECRET, {expiresIn: '1d'})
 }
 
 EmployeeSchema.methods.comparePassword = function (password) {

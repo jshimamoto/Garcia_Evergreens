@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 require("express-async-errors");
 
-const Admin = require("../models/Admin");
+const Employee = require("../models/Employee");
 const Product = require("../models/Product");
 const InventoryPost = require("../models/InventoryPost");
 
@@ -12,12 +12,12 @@ const StatusCodes = require("http-status-codes");
 
 router.route("/")
     .get(async (req, res) => {
-        const inventoryPosts = await InventoryPost.find({});
+        const employeeID = req.user.userID
+        const inventoryPosts = await InventoryPost.find({createdBy: employeeID});
         return res.status(StatusCodes.OK).json({ inventoryPosts });
     })
     .post(async (req, res) => {
         req.body.createdBy = req.user.userID;
-        console.log(req.user.userID)
         const {productID, qtyProcessed} = req.body
         req.body.productID = productID
         const updateInventory = async (prodID, qtyProcess) => {
@@ -54,7 +54,7 @@ router.route("/:id")
                 notes,
                 deltas
             },
-            user: { userID },
+            admin: { adminID },
             params: { id: inventoryID },
         } = req;
         
@@ -89,7 +89,7 @@ router.route("/:id")
                 premiumBoxes,
                 basicBoxes
             },
-            user: { userID },
+            admin: { adminID },
             params: { id: inventoryID },
         } = req;
 
@@ -107,17 +107,5 @@ router.route("/:id")
         }
         return res.status(StatusCodes.OK).send("Inventory Post successfully removed");
     });
-    
-// .get(async (req, res) => {
-// 	return res.send('get admin inventory post')
-// })
-// .patch(async (req, res) => {
-// 	return res.send('edit admin inventory post')
-// })
-// .delete(async (req, res) => {
-// 	return res.send('delete admin inventory post')
-// })
-
-// create a new employee
 
 module.exports = router;
