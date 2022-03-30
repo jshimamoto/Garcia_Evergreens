@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 require('express-async-errors')
 
-const Admin = require('../models/Admin')
-const Product = require('../models/Product')
+const Box = require('../models/Box')
 
 const BadRequestError = require('../errors/bad-request')
 const UnauthenticatedError = require('../errors/auth-error')
@@ -13,8 +12,8 @@ const StatusCodes = require('http-status-codes')
 // Create and View Products----------------------------------------------------------------------------------------------------------
 router.route('/')
 	.get( async (req, res) => {
-		const products = await Product.find({});
-		return res.status(StatusCodes.OK).json({products, count: products.length})
+		const boxes = await Box.find({});
+		return res.status(StatusCodes.OK).json({boxes, count: boxes.length})
 	})
 	.post( async (req, res) => {
 		req.body.createdBy = req.user.username
@@ -35,7 +34,7 @@ router.route('/:id')
 	.patch(async (req, res) => {
 		const {
 			body: {name, notes},
-			user: {username},
+			admin: {adminID},
 			params: {id: productID}
 		} = req;
 		if (name === '') {
@@ -52,7 +51,7 @@ router.route('/:id')
 		return res.status(StatusCodes.OK).json({product})
 	})
 	.delete(async (req,res) => {
-		const {user: {username}, params: {id: productID}} = req;
+		const {admin: {adminID}, params: {id: productID}} = req;
 		const product = await Product.findByIdAndDelete({_id: productID})
 		if (!product) {
 			throw new BadRequestError(`No product with ID ${productID}`)

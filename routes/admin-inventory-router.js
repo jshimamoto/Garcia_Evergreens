@@ -10,19 +10,20 @@ const BadRequestError = require("../errors/bad-request");
 const UnauthenticatedError = require("../errors/auth-error");
 const StatusCodes = require("http-status-codes");
 
+// Get/Post-----------------------------------------------------------------------------------------------------------
 router.route("/")
     .get(async (req, res) => {
         const inventoryPosts = await InventoryPost.find({});
         return res.status(StatusCodes.OK).json({ inventoryPosts });
     })
     .post(async (req, res) => {
-        req.body.createdBy = req.user.userID;
-        console.log(req.user.userID)
+        req.body.createdBy = req.user.username;
+        console.log(req.user.username)
         const {productID, qtyProcessed} = req.body
         req.body.productID = productID
         const updateInventory = async (prodID, qtyProcess) => {
             let product = await Product.findById(prodID)
-            product.inventory += qtyProcess
+            product.pendingInventory += qtyProcess
             await product.save()
         }
         updateInventory(productID, qtyProcessed)
@@ -30,6 +31,7 @@ router.route("/")
         return res.status(StatusCodes.OK).json({ data: newInventoryPost, msg: "Successfully submitted" });
 });
 
+// Update/Delete-----------------------------------------------------------------------------------------------------------
 router.route("/:id")
     .get(async (req, res) => {
         const { id: inventoryID } = req.params;
@@ -107,6 +109,39 @@ router.route("/:id")
         }
         return res.status(StatusCodes.OK).send("Inventory Post successfully removed");
     });
+
+// Approve-----------------------------------------------------------------------------------------------------------
+router.route('/approve/:id')
+    .patch(async (req,res) => {
+        const {
+            body: {
+                productID,
+                qtyProcessed,
+                status
+            },
+            user: { userID },
+            params: { id: inventoryID },
+        } = req;
+
+        const updateProduct = async (productID, qtyDelta) => {
+            let product = await Product.findById(productID);
+            product.pendingInventory -= qtyDelta
+            product.inventory += qtyDelta;
+            await product.save()
+        }
+
+        updateProduct(productID, qtyProcessed)
+
+        const inventory = await InventoryPost.findByIdAndUpdate(
+            { _id: inventoryID },
+            req.body,
+            { new: true, runValidators: true }
+            );
+        if (!inventory) {
+            throw new BadRequestError(`No inventory post with ID ${inventoryID}`);
+        }
+        return res.status(StatusCodes.OK).json({ inventory });
+    })
     
 // .get(async (req, res) => {
 // 	return res.send('get admin inventory post')

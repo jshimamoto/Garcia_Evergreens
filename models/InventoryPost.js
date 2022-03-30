@@ -50,8 +50,8 @@ const InventoryPostSchema = new mongoose.Schema({
         maxLength: 1000,
     },
     createdBy: {
-        type: mongoose.Types.ObjectId,
-        required: [true, "Please provide user"],
+        type: String,
+        required: [true, "Please provide user"]
     }
     },
     { timestamps: true }

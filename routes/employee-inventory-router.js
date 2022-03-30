@@ -12,17 +12,17 @@ const StatusCodes = require("http-status-codes");
 
 router.route("/")
     .get(async (req, res) => {
-        const employeeID = req.user.userID
-        const inventoryPosts = await InventoryPost.find({createdBy: employeeID});
+        const employeeUsername = req.user.username
+        const inventoryPosts = await InventoryPost.find({createdBy: employeeUsername});
         return res.status(StatusCodes.OK).json({ inventoryPosts });
     })
     .post(async (req, res) => {
-        req.body.createdBy = req.user.userID;
+        req.body.createdBy = req.user.username;
         const {productID, qtyProcessed} = req.body
         req.body.productID = productID
         const updateInventory = async (prodID, qtyProcess) => {
             let product = await Product.findById(prodID)
-            product.inventory += qtyProcess
+            product.pendingInventory += qtyProcess
             await product.save()
         }
         updateInventory(productID, qtyProcessed)
