@@ -21,8 +21,14 @@ router.route('/')
 		return res.status(StatusCodes.CREATED).json({box})
 	})
 
-// New Box Inventory----------------------------------------------------------------------------------------------------------
+// Box Inventory Posts----------------------------------------------------------------------------------------------------------
 router.route('/inventory')
+	.get( async (req, res) => {
+		const boxPosts = await BoxPost.find({});
+		return res.status(StatusCodes.OK).json({boxPosts})
+    })
+
+router.route('/inventory/new')
 	.post( async (req, res) => {
 		req.body.createdBy = req.user.username
         const {
