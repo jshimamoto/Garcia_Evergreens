@@ -5,6 +5,7 @@ require("express-async-errors");
 const Admin = require("../models/Admin");
 const Product = require("../models/Product");
 const InventoryPost = require("../models/InventoryPost");
+const Box = require('../models/Box')
 
 const BadRequestError = require("../errors/bad-request");
 const UnauthenticatedError = require("../errors/auth-error");
@@ -18,15 +19,25 @@ router.route("/")
     })
     .post(async (req, res) => {
         req.body.createdBy = req.user.username;
-        console.log(req.user.username)
-        const {productID, qtyProcessed} = req.body
+        const {productID, qtyProcessed, basicBoxes, premiumBoxes} = req.body
         req.body.productID = productID
-        const updateInventory = async (prodID, qtyProcess) => {
-            let product = await Product.findById(prodID)
-            product.pendingInventory += qtyProcess
+
+        const updateInventory = async (productID, productQty, basicBoxes, premiumBoxes) => {
+            let product = await Product.findById(productID)
+            product.pendingInventory += productQty
             await product.save()
+
+            let basic = await Box.findById("624602839b74b6f206a7590d")
+            basic.inventory -= basicBoxes;
+            await basic.save()
+
+            let premium = await Box.findById("624738f4d7b5f4b99197937d")
+            premium.inventory -= premiumBoxes;
+            await premium.save()
         }
-        updateInventory(productID, qtyProcessed)
+
+        updateInventory(productID, qtyProcessed, basicBoxes, premiumBoxes)
+
         const newInventoryPost = await InventoryPost.create(req.body);
         return res.status(StatusCodes.OK).json({ data: newInventoryPost, msg: "Successfully submitted" });
 });
@@ -64,13 +75,22 @@ router.route("/:id")
             throw new BadRequestError("Please fill out all required fields");
         }
 
-        const updateProduct = async (productID, qtyDelta) => {
+        const updateInventory = async (productID, qtyDelta, basicBoxesDelta, premiumBoxesDelta) => {
             let product = await Product.findById(productID);
             product.inventory += qtyDelta;
             await product.save()
+
+            let basic = await Box.findById("624602839b74b6f206a7590d")
+            console.log(basic)
+            basic.inventory += basicBoxesDelta;
+            await basic.save()
+
+            let premium = await Box.findById("624738f4d7b5f4b99197937d")
+            premium.inventory += premiumBoxesDelta;
+            await premium.save()
         }
 
-        updateProduct(productID, deltas.qtyDelta)
+        updateInventory(productID, deltas.qtyDelta, deltas.premiumBoxesDelta, deltas.basicBoxesDelta)
 
         const inventory = await InventoryPost.findByIdAndUpdate(
             { _id: inventoryID },

@@ -3,6 +3,7 @@ const router = express.Router();
 require('express-async-errors')
 
 const Box = require('../models/Box')
+const BoxPost = require('../models/BoxPost')
 
 const BadRequestError = require('../errors/bad-request')
 const UnauthenticatedError = require('../errors/auth-error')
