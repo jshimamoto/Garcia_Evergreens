@@ -64,6 +64,7 @@ router.route("/:id")
                 premiumBoxes,
                 basicBoxes,
                 totalBoxes,
+                status,
                 notes,
                 deltas
             },
@@ -91,7 +92,7 @@ router.route("/:id")
         }
 
         updateInventory(productID, deltas.qtyDelta, deltas.premiumBoxesDelta, deltas.basicBoxesDelta)
-
+        req.body.status = "submitted"
         const inventory = await InventoryPost.findByIdAndUpdate(
             { _id: inventoryID },
             req.body,
