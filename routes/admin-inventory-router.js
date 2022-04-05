@@ -42,8 +42,9 @@ router.route("/")
         return res.status(StatusCodes.OK).json({ data: newInventoryPost, msg: "Successfully submitted" });
 });
 
-// Update/Delete-----------------------------------------------------------------------------------------------------------
+// Update/Delete-----------------------------------------------------------------------------------------------------------------------------
 router.route("/:id")
+    // Get------------------------------------------------------------------------------------------
     .get(async (req, res) => {
         const { id: inventoryID } = req.params;
         const inventory = await InventoryPost.findOne({ _id: inventoryID });
@@ -52,6 +53,7 @@ router.route("/:id")
         }
         return res.status(StatusCodes.OK).json({ inventory });
     })
+    // Patch-----------------------------------------------------------------------------------------
     .patch(async (req, res) => {
         const {
             body: {
@@ -64,7 +66,6 @@ router.route("/:id")
                 premiumBoxes,
                 basicBoxes,
                 totalBoxes,
-                status,
                 notes,
                 deltas
             },
@@ -76,13 +77,13 @@ router.route("/:id")
             throw new BadRequestError("Please fill out all required fields");
         }
 
-        const updateInventory = async (productID, qtyDelta, basicBoxesDelta, premiumBoxesDelta) => {
+        const updateInventory = async (productID, newQty, basicBoxesDelta, premiumBoxesDelta) => {
             let product = await Product.findById(productID);
-            product.inventory += qtyDelta;
+            product.pendingInventory += newQty;
+            product.inventory -= newQty
             await product.save()
 
             let basic = await Box.findById("624602839b74b6f206a7590d")
-            console.log(basic)
             basic.inventory += basicBoxesDelta;
             await basic.save()
 
@@ -91,7 +92,7 @@ router.route("/:id")
             await premium.save()
         }
 
-        updateInventory(productID, deltas.qtyDelta, deltas.premiumBoxesDelta, deltas.basicBoxesDelta)
+        updateInventory(productID, qtyProcessed, deltas.premiumBoxesDelta, deltas.basicBoxesDelta)
         req.body.status = "submitted"
         const inventory = await InventoryPost.findByIdAndUpdate(
             { _id: inventoryID },
@@ -103,28 +104,41 @@ router.route("/:id")
         }
         return res.status(StatusCodes.OK).json({ inventory });
     })
+    // Delete-----------------------------------------------------------------------------------
     .delete(async (req, res) => {
         const {
             body:{
                 productID,
                 qtyProcessed,
-                lostProduct,
                 premiumBoxes,
-                basicBoxes
+                basicBoxes,
+                status
             },
             user: { userID },
-            params: { id: inventoryID },
+            params: {id}
         } = req;
 
-        const updateProduct = async (ID, delta) => {
-            let product = await Product.findById(ID);
-            product.inventory -= delta;
+        const updateInventory = async (productID, qtyDelta, basicBoxes, premiumBoxes) => {
+            let product = await Product.findById(productID);
+            if (status === "submitted") {
+                product.pendingInventory -= qtyDelta;
+            } else {
+                product.inventory -= qtyDelta
+            }
             await product.save()
+
+            let basic = await Box.findById("624602839b74b6f206a7590d")
+            basic.inventory += basicBoxes;
+            await basic.save()
+
+            let premium = await Box.findById("624738f4d7b5f4b99197937d")
+            premium.inventory += premiumBoxes;
+            await premium.save()
         }
 
-        updateProduct(productID, qtyProcessed)
+        updateInventory(productID, qtyProcessed, basicBoxes, premiumBoxes)
 
-        const inventory = await InventoryPost.findByIdAndDelete({_id: inventoryID,});
+        const inventory = await InventoryPost.findByIdAndDelete({_id: id});
         if (!inventory) {
             throw new BadRequestError(`No inventory post with ID ${inventoryID}`);
         }
