@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 require("express-async-errors");
+const {parseAsync} = require('json2csv');
+const {Parser} = require('json2csv');
+
 
 const Admin = require("../models/Admin");
 const Product = require("../models/Product");
@@ -12,10 +15,58 @@ const UnauthenticatedError = require("../errors/auth-error");
 const StatusCodes = require("http-status-codes");
 
 // Get/Post-----------------------------------------------------------------------------------------------------------
+router.route("/export")
+    .get(async (req, res) => {
+        const fields = [
+            {
+                label: "Supplier",
+                value:"supplier"
+            },
+            {
+                label: "Product",
+                value:"product"
+            },
+            {
+                label: "Quanitity Received",
+                value:"qtyReceived"
+            },
+            {
+                label: "Quanitity Processed",
+                value:"qtyProcessed"
+            },
+            {
+                label: "Lost Product",
+                value:"lostProduct"
+            },
+            {
+                label: "Premium Boxes Used",
+                value:"premiumBoxes"
+            },
+            {
+                label: "Basic Boxes Used",
+                value:"basicBoxes"
+            },
+            {
+                label: "Total Boxes",
+                value:"totalBoxes"
+            },
+            {
+                label: "Created By",
+                value:"createdBy"
+            }
+        ];
+        const opts = { fields: fields, quote: '' };
+        jsonParser = new Parser({opts})
+        const inventoryPosts = await InventoryPost.find({});
+        const csv = await jsonParser.parse(inventoryPosts);
+        res.status(StatusCodes.OK).attachment('inventory_export.csv').download(csv);
+        console.log("res sent")
+    })
+
 router.route("/")
     .get(async (req, res) => {
         const inventoryPosts = await InventoryPost.find({});
-        return res.status(StatusCodes.OK).json({ inventoryPosts });
+        return res.status(StatusCodes.OK).json({inventoryPosts});
     })
     .post(async (req, res) => {
         req.body.createdBy = req.user.username;
