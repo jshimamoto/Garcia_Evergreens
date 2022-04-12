@@ -16,7 +16,13 @@ const StatusCodes = require("http-status-codes");
 
 // Get/Post-----------------------------------------------------------------------------------------------------------
 router.route("/export")
-    .get(async (req, res) => {
+    .post(async (req, res) => {
+        // const data = []
+        // for await (const key of Object.key(req.body)) {
+        //     data.push(req.body[key])
+        //     console.log(data)
+        // }
+
         const fields = [
             {
                 label: "Supplier",
@@ -57,9 +63,8 @@ router.route("/export")
         ];
         const opts = { fields: fields, quote: '' };
         jsonParser = new Parser({opts})
-        const inventoryPosts = await InventoryPost.find({});
-        const csv = await jsonParser.parse(inventoryPosts);
-        res.status(StatusCodes.OK).attachment('inventory_export.csv').download(csv);
+        const csv = await jsonParser.parse(req.body);
+        res.status(StatusCodes.OK).attachment('inventory_export.csv').send(csv);
         console.log("res sent")
     })
 
