@@ -17,11 +17,11 @@ const StatusCodes = require("http-status-codes");
 // Get/Post-----------------------------------------------------------------------------------------------------------
 router.route("/export")
     .post(async (req, res) => {
-        // const data = []
-        // for await (const key of Object.key(req.body)) {
-        //     data.push(req.body[key])
-        //     console.log(data)
-        // }
+        const data = []
+        for (const key of Object.key(req.body)) {
+            data.push(req.body[key])
+            console.log(data)
+        }
 
         const fields = [
             {
@@ -61,11 +61,23 @@ router.route("/export")
                 value:"createdBy"
             }
         ];
+
         const opts = { fields: fields, quote: '' };
-        jsonParser = new Parser({opts})
-        const csv = await jsonParser.parse(req.body);
-        res.status(StatusCodes.OK).attachment('inventory_export.csv').send(csv);
-        console.log("res sent")
+
+        try {
+            const jsonParser = new Parser(opts);
+            const csv = parser.parse(data)
+            console.log(csv)
+            //res.setHeader('Content-disposition', 'attachment; filename=inventoryPostExport.csv');
+            //res.set('Content-Type', 'text/csv')
+            res.attachment('inventory_export.csv').send(csv)
+            res.status(StatusCodes.OK)
+        } catch (err) {
+            console.log(err)
+        }
+
+        // jsonParser = new Parser({opts})
+        // const csv = await jsonParser.parse(req.body);
     })
 
 router.route("/")
