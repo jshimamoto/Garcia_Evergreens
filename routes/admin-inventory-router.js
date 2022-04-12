@@ -13,72 +13,9 @@ const Box = require('../models/Box')
 const BadRequestError = require("../errors/bad-request");
 const UnauthenticatedError = require("../errors/auth-error");
 const StatusCodes = require("http-status-codes");
+const { findById } = require("../models/Admin");
 
 // Get/Post-----------------------------------------------------------------------------------------------------------
-router.route("/export")
-    .post(async (req, res) => {
-        const data = []
-        for (const key of Object.key(req.body)) {
-            data.push(req.body[key])
-            console.log(data)
-        }
-
-        const fields = [
-            {
-                label: "Supplier",
-                value:"supplier"
-            },
-            {
-                label: "Product",
-                value:"product"
-            },
-            {
-                label: "Quanitity Received",
-                value:"qtyReceived"
-            },
-            {
-                label: "Quanitity Processed",
-                value:"qtyProcessed"
-            },
-            {
-                label: "Lost Product",
-                value:"lostProduct"
-            },
-            {
-                label: "Premium Boxes Used",
-                value:"premiumBoxes"
-            },
-            {
-                label: "Basic Boxes Used",
-                value:"basicBoxes"
-            },
-            {
-                label: "Total Boxes",
-                value:"totalBoxes"
-            },
-            {
-                label: "Created By",
-                value:"createdBy"
-            }
-        ];
-
-        const opts = { fields: fields, quote: '' };
-
-        try {
-            const jsonParser = new Parser(opts);
-            const csv = parser.parse(data)
-            console.log(csv)
-            //res.setHeader('Content-disposition', 'attachment; filename=inventoryPostExport.csv');
-            //res.set('Content-Type', 'text/csv')
-            res.attachment('inventory_export.csv').send(csv)
-            res.status(StatusCodes.OK)
-        } catch (err) {
-            console.log(err)
-        }
-
-        // jsonParser = new Parser({opts})
-        // const csv = await jsonParser.parse(req.body);
-    })
 
 router.route("/")
     .get(async (req, res) => {
@@ -89,7 +26,7 @@ router.route("/")
         req.body.createdBy = req.user.username;
         const {productID, qtyProcessed, basicBoxes, premiumBoxes} = req.body
         req.body.productID = productID
-
+        
         const updateInventory = async (productID, productQty, basicBoxes, premiumBoxes) => {
             let product = await Product.findById(productID)
             product.pendingInventory += productQty
@@ -103,12 +40,27 @@ router.route("/")
             premium.inventory -= premiumBoxes;
             await premium.save()
         }
-
+            
         updateInventory(productID, qtyProcessed, basicBoxes, premiumBoxes)
-
+        
         const newInventoryPost = await InventoryPost.create(req.body);
         return res.status(StatusCodes.OK).json({ data: newInventoryPost, msg: "Successfully submitted" });
-});
+    });
+
+router.route("/export")
+    .post(async (req, res) => {
+        const exports = req.body.data;
+        const updateStatus = async (array) => {
+            for (let i = 0; i < array.length; i++) {
+                let post = await InventoryPost.findById(array[i]._id)
+                post.status = "completed"
+                await post.save()
+            }
+        }
+
+        updateStatus(exports)
+        res.status(StatusCodes.OK).send("success")
+    })
 
 // Update/Delete-----------------------------------------------------------------------------------------------------------------------------
 router.route("/:id")
