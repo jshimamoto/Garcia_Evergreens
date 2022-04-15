@@ -21,14 +21,14 @@ router.route("/")
 });
 
 router.route("/:id")
-    // .get(async (req, res) => {
-    //     const { id: inventoryID } = req.params;
-    //     const inventory = await InventoryPost.findOne({ _id: inventoryID });
-    //     if (!inventory) {
-    //         throw new BadRequestError("Inventory Post does not exist");
-    //     }
-    //     return res.status(StatusCodes.OK).json({ inventory });
-    // })
+    .get(async (req, res) => {
+        const { id: employeeID } = req.params;
+        const employee = await Employee.findById(employeeID);
+        if (!employee) {
+            throw new BadRequestError("Employee does not exist");
+        }
+        return res.status(StatusCodes.OK).json({ employee });
+    })
     // .patch(async (req, res) => {
     //     const {
     //         body: {

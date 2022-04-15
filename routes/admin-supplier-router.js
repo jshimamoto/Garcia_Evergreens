@@ -17,7 +17,7 @@ router.route('/')
 		return res.status(StatusCodes.OK).json({suppliers})
 	})
     .post(async (req, res) => {
-        req.body.createdBy = req.admin.adminID
+        req.body.createdBy = req.user.username
         const newSupplier = await Supplier.create(req.body);
         return res.status(StatusCodes.OK).json({data: newSupplier, msg: "Successfully submitted"})
     })

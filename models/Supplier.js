@@ -26,10 +26,9 @@ const SupplierSchema = new mongoose.Schema({
         default: "",
         maxLength: 1000,
      },
-    createdBy: {
-        type: mongoose.Types.ObjectId,
-        ref: 'Admin',
-        required: [true, 'Please provide admin']
+     createdBy: {
+        type: String,
+        required: [true, "Please provide user"]
     }
 });
 
