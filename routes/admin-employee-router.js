@@ -4,6 +4,7 @@ require("express-async-errors");
 
 const Admin = require("../models/Admin");
 const Employee = require("../models/Employee");
+const InventoryPost = require("../models/InventoryPost")
 
 const BadRequestError = require("../errors/bad-request");
 const UnauthenticatedError = require("../errors/auth-error");
@@ -78,6 +79,18 @@ router.route("/:id")
     //     }
     //     return res.status(StatusCodes.OK).send("Inventory Post successfully removed");
     // });
+
+//Employee Inventory Posts------------------------------------------------------------------------------------
+router.route("/inventory/:id")
+    .get(async (req, res) => {
+        const { id: employeeID } = req.params;
+        const employee = await Employee.findById(employeeID)
+        const inventoryPosts = await InventoryPost.find({createdBy: employee.username});
+        if (!inventoryPosts) {
+            throw new BadRequestError("Employee does not exist");
+        }
+        return res.status(StatusCodes.OK).json({ inventoryPosts });
+    })
     
 // .get(async (req, res) => {
 // 	return res.send('get admin inventory post')
