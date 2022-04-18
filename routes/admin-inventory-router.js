@@ -27,21 +27,21 @@ router.route("/")
         const {productID, qtyProcessed, basicBoxes, premiumBoxes} = req.body
         req.body.productID = productID
         
-        const updateInventory = async (productID, productQty, basicBoxes, premiumBoxes) => {
-            let product = await Product.findById(productID)
-            product.pendingInventory += productQty
-            await product.save()
+        // const updateInventory = async (productID, productQty, basicBoxes, premiumBoxes) => {
+        //     let product = await Product.findById(productID)
+        //     product.pendingInventory += productQty
+        //     await product.save()
 
-            let basic = await Box.findById("624602839b74b6f206a7590d")
-            basic.inventory -= basicBoxes;
-            await basic.save()
+        //     let basic = await Box.findById("624602839b74b6f206a7590d")
+        //     basic.inventory -= basicBoxes;
+        //     await basic.save()
 
-            let premium = await Box.findById("624738f4d7b5f4b99197937d")
-            premium.inventory -= premiumBoxes;
-            await premium.save()
-        }
+        //     let premium = await Box.findById("624738f4d7b5f4b99197937d")
+        //     premium.inventory -= premiumBoxes;
+        //     await premium.save()
+        // }
             
-        updateInventory(productID, qtyProcessed, basicBoxes, premiumBoxes)
+        // updateInventory(productID, qtyProcessed, basicBoxes, premiumBoxes)
         
         const newInventoryPost = await InventoryPost.create(req.body);
         return res.status(StatusCodes.OK).json({ data: newInventoryPost, msg: "Successfully submitted" });

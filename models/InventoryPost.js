@@ -37,6 +37,10 @@ const InventoryPostSchema = new mongoose.Schema({
         type: Number,
         required: [true, "Please provide the total boxes used for this inventory post"]
     },
+    dateReceived: {
+        type: Date,
+        required: [true, "Please provide the date received for this inventory post"]
+    },
     status: {
         type: String,
         required: true,
