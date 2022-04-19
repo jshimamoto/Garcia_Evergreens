@@ -13,7 +13,6 @@ const StatusCodes = require("http-status-codes");
 router.route("/")
     .get(async (req, res) => {
         const employeeUsername = req.user.username
-        console.log(employeeUsername)
         const inventoryPosts = await InventoryPost.find({createdBy: employeeUsername});
         return res.status(StatusCodes.OK).json({ inventoryPosts });
     })
