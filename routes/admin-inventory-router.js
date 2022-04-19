@@ -52,7 +52,7 @@ router.route("/export")
         const exports = req.body.data;
         const updateStatus = async (array) => {
             for (let i = 0; i < array.length; i++) {
-                let post = await InventoryPost.findById(array[i]._id)
+                let post = await InventoryPost.findById(array[i])
                 post.status = "completed"
                 await post.save()
             }
