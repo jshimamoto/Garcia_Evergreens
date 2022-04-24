@@ -1,23 +1,27 @@
 const mongoose = require("mongoose");
 
-const InventoryPostSchema = new mongoose.Schema({
+const DeliveryTicketSchema = new mongoose.Schema({
     supplier: {
         type: String,
         required: [true, "Please provide the supplier for this inventory post"]
     },
-    deliveryTicket: {
-        type: mongoose.ObjectId,
-        required: [true, "Post must be linked to a delivery ticket"]
-    },
-    products: {
+    product: {
         type: Array,
         required: [true, "Please provide the product name for this inventory post"]
+    },
+    dateReceived: {
+        type: Date,
+        required: [true, "Please provide the date received for this inventory post"]
+    },
+    landOrigin: {
+        type: String,
+        required: [true, "Please provide land origin"]
     },
     status: {
         type: String,
         required: true,
-        enum: ["submitted", "approved", "completed"],
-        default: "submitted"
+        enum: ["open", "closed", "completed"],
+        default: "open"
     },
     notes: {
         type: String,
@@ -33,4 +37,4 @@ const InventoryPostSchema = new mongoose.Schema({
     { timestamps: true }
 );
 
-module.exports = mongoose.model("InventoryPost", InventoryPostSchema);
+module.exports = mongoose.model("DeliveryTicket", DeliveryTicketSchema);

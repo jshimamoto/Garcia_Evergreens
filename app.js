@@ -5,15 +5,16 @@ const path = require("path");
 const cors = require("cors");
 
 const adminRouter = require("./routes/admin-router");
+const deliveryRouter = require("./routes/delivery-router")
 const adminProductRouter = require("./routes/admin-product-router");
-const adminInventoryRouter = require("./routes/admin-inventory-router");
+const inventoryRouter = require("./routes/inventory-router");
 const adminEmployeeRouter = require('./routes/admin-employee-router')
 const adminSupplierRouter = require('./routes/admin-supplier-router')
 const adminBoxRouter = require('./routes/admin-box-router')
 
-const productRouter = require("./routes/product-router");
+//const productRouter = require("./routes/product-router");
 
-const employeeInventoryRouter = require("./routes/employee-inventory-router")
+//const employeeInventoryRouter = require("./routes/employee-inventory-router")
 
 const notFoundMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
@@ -37,15 +38,15 @@ app.use(express.static("./public"));
 
 // Routes -------------------------------------------------------------------------------
 app.use('/api/v1/admin/products', authMiddleware, adminProductRouter);
-app.use('/api/v1/admin/inventory', authMiddleware, adminInventoryRouter);
 app.use('/api/v1/admin/employees', authMiddleware, adminEmployeeRouter);
-app.use('/api/v1/admin/supplier', authMiddleware, adminSupplierRouter);
+app.use('/api/v1/admin/suppliers', authMiddleware, adminSupplierRouter);
+app.use('/api/v1/inventory', authMiddleware, inventoryRouter);
+app.use('/api/v1/delivery', authMiddleware, deliveryRouter);
 app.use('/api/v1/boxes', authMiddleware, adminBoxRouter)
 app.use('/api/v1/admin', adminRouter);
 
-app.use('/api/v1/employee/inventory', authMiddleware, employeeInventoryRouter);
+//app.use('/api/v1/employee/inventory', authMiddleware, employeeInventoryRouter);
 
-app.use("/api/v1/products", productRouter);
 
 // app.use('/api/v1/admin/products', authMiddleware, adminRouter)
 
