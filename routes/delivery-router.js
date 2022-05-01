@@ -21,7 +21,9 @@ router.route("/")
     })
     .post(async (req, res) => {
         req.body.createdBy = req.user.username;
+        console.log(req.body.products)
         const newDeliveryTicket = await DeliveryTicket.create(req.body);
+        console.log(newDeliveryTicket)
         return res.status(StatusCodes.OK).json({ data: newDeliveryTicket, msg: "Successfully submitted" });
     });
 

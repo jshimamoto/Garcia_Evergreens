@@ -21,8 +21,9 @@ router.route("/")
     })
     .post(async (req, res) => {
         req.body.createdBy = req.user.username;
-        const {productID, qtyProcessed, basicBoxes, premiumBoxes} = req.body
-        req.body.productID = productID
+        
+        // const {productID, qtyProcessed, basicBoxes, premiumBoxes} = req.body
+        // req.body.productID = productID
         
         // const updateInventory = async (productID, productQty, basicBoxes, premiumBoxes) => {
         //     let product = await Product.findById(productID)

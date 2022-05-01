@@ -5,7 +5,7 @@ const DeliveryTicketSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide the supplier for this inventory post"]
     },
-    product: {
+    products: {
         type: Array,
         required: [true, "Please provide the product name for this inventory post"]
     },

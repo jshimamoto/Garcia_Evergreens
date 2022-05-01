@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const InventoryPostSchema = new mongoose.Schema({
     supplier: {
         type: String,
-        required: [true, "Please provide the supplier for this inventory post"]
+        required: [true, 'Please provide a supplier']
     },
     deliveryTicket: {
         type: mongoose.ObjectId,
