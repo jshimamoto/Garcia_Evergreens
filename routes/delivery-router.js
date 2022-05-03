@@ -118,27 +118,27 @@ router.route("/:id")
             params: {id}
         } = req;
 
-        const updateInventory = async (productID, qtyDelta, basicBoxes, premiumBoxes) => {
-            let product = await Product.findById(productID);
-            if (status === "submitted") {
-                product.pendingInventory -= qtyDelta;
-            } else {
-                product.inventory -= qtyDelta
-            }
-            await product.save()
+        // const updateInventory = async (productID, qtyDelta, basicBoxes, premiumBoxes) => {
+        //     let product = await Product.findById(productID);
+        //     if (status === "submitted") {
+        //         product.pendingInventory -= qtyDelta;
+        //     } else {
+        //         product.inventory -= qtyDelta
+        //     }
+        //     await product.save()
 
-            let basic = await Box.findById("624602839b74b6f206a7590d")
-            basic.inventory += basicBoxes;
-            await basic.save()
+        //     let basic = await Box.findById("624602839b74b6f206a7590d")
+        //     basic.inventory += basicBoxes;
+        //     await basic.save()
 
-            let premium = await Box.findById("624738f4d7b5f4b99197937d")
-            premium.inventory += premiumBoxes;
-            await premium.save()
-        }
+        //     let premium = await Box.findById("624738f4d7b5f4b99197937d")
+        //     premium.inventory += premiumBoxes;
+        //     await premium.save()
+        // }
 
-        updateInventory(productID, qtyProcessed, basicBoxes, premiumBoxes)
+        // updateInventory(productID, qtyProcessed, basicBoxes, premiumBoxes)
 
-        const inventory = await InventoryPost.findByIdAndDelete({_id: id});
+        const deliveryTicket = await DeliveryTicket.findByIdAndDelete({_id: id});
         if (!inventory) {
             throw new BadRequestError(`No inventory post with ID ${inventoryID}`);
         }

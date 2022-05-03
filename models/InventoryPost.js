@@ -13,6 +13,10 @@ const InventoryPostSchema = new mongoose.Schema({
         type: Array,
         required: [true, "Please provide the product name for this inventory post"]
     },
+    dateProcessed: {
+        type: Date,
+        required: [true, "Please provide the date processed for this inventory post"]
+    },
     status: {
         type: String,
         required: true,
