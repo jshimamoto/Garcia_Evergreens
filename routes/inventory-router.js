@@ -168,22 +168,11 @@ router.route('/approve/:id')
     .patch(async (req,res) => {
         const {
             body: {
-                productID,
-                qtyProcessed,
                 status
             },
             user: { userID },
             params: { id: inventoryID },
         } = req;
-
-        const updateProduct = async (productID, qtyDelta) => {
-            let product = await Product.findById(productID);
-            product.pendingInventory -= qtyDelta
-            product.inventory += qtyDelta;
-            await product.save()
-        }
-
-        updateProduct(productID, qtyProcessed)
 
         const inventory = await InventoryPost.findByIdAndUpdate(
             { _id: inventoryID },
