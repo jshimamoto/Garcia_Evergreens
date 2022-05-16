@@ -51,11 +51,32 @@ router.route("/inventoryposts/:id")
 // Update/Delete-----------------------------------------------------------------------------------------------------------------------------
 router.route("/:id")
     .patch(async (req, res) => {
-        const { status, productsBoxed } = req.body
-        console.log(req.body)
+        const { status, productsBoxed, deliveryID } = req.body
+
+        const deliveryTicket = await DeliveryTicket.findByIdAndUpdate(
+            { _id: deliveryID },
+            {status},
+            { new: true, runValidators: true }
+            );
+
+        if (!deliveryID) {
+            throw new BadRequestError(`No delivery ticket with ID ${deliveryID}`);
+        }
+
+        const updateInventory = async (products) => {
+            for (let i = 0; i < products.length; i++) {
+                let temp = await Product.find({name: products[i].name})
+                let product = temp[0]
+                product.premiumBoxes = product.premiumBoxes + products[i].premiumBoxes;
+                product.basicBoxes = product.basicBoxes + products[i].basicBoxes;
+                await product.save();
+            }
+        }
+
+        updateInventory(productsBoxed)
+
         return res.status(StatusCodes.OK).send('closed')
     })
 
     
-
 module.exports = router;
