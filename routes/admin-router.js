@@ -15,6 +15,7 @@ const StatusCodes = require('http-status-codes')
 
 // Login/Create Admin----------------------------------------------------------------------------------------------------------
 router.route('/')
+	//Login
 	.post( async (req, res, next) => {
 		const {email, password} = req.body;
 		if (!email || !password) {
@@ -31,6 +32,11 @@ router.route('/')
 		const token = admin.createJWT();
 		return res.status(StatusCodes.OK).json({admin: {username: admin.username, id: admin._id}, token})
 	})
+	//Retrieve admins
+	.get(async (req, res) => {
+		const admins = await Admin.find({})
+		return res.status(StatusCodes.OK).json({admins})
+	})
 
 router.route('/employee')
     .post( async (req, res, next) => {
@@ -44,7 +50,8 @@ router.route('/employee')
 		}
 		const isPasswordCorrect = await employee.comparePassword(password)
 		if (!isPasswordCorrect) {
-			throw new UnauthenticatedError('Invalid credentials')
+			console.log("incorrect")
+			throw new UnauthenticatedError('Invalid Credentials')
 		}
 		const token = employee.createJWT();
 		return res.status(StatusCodes.OK).json({employee: {username: employee.username, id: employee._id}, token})
@@ -53,13 +60,7 @@ router.route('/employee')
 router.route('/register')
 	.post( async (req, res, next) => {
 		const admin = await Admin.create({...req.body});
-		const token = admin.createJWT();
-		return res.status(StatusCodes.CREATED).json({admin: admin.username, id: admin._id, token})
-	})
-
-router.route('/createAdmin')
-	.post(async (req,res) => {
-		res.send('create new admin')
+		return res.status(StatusCodes.CREATED).send("success")
 	})
 
 // Admin Dashboard----------------------------------------------------------------------------------------------------------

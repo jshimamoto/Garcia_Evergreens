@@ -16,8 +16,7 @@ const EmployeeSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, "Please provide a password"],
-        minLength: 8,
-        maxlength: 40
+        minLength: 8
     },
     phone: {
         type: String,

@@ -14,6 +14,7 @@ const adminAuthMiddleware = async (req, res, next) => {
 		req.user = {userID: payload.userID, username: payload.username}
 		next()
 	} catch (error) {
+		console.log("error")
 		throw new UnauthenticatedError('Athentication invalid')
 	}
 }
