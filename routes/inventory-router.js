@@ -13,37 +13,25 @@ const StatusCodes = require("http-status-codes");
 const { findById } = require("../models/Admin");
 
 // Get/Post-----------------------------------------------------------------------------------------------------------
-
+//Get all and post
 router.route("/")
     .get(async (req, res) => {
         const inventoryPosts = await InventoryPost.find({});
         return res.status(StatusCodes.OK).json({inventoryPosts});
     })
     .post(async (req, res) => {
-        req.body.createdBy = req.user.username;
-        
-        // const {productID, qtyProcessed, basicBoxes, premiumBoxes} = req.body
-        // req.body.productID = productID
-        
-        // const updateInventory = async (productID, productQty, basicBoxes, premiumBoxes) => {
-        //     let product = await Product.findById(productID)
-        //     product.pendingInventory += productQty
-        //     await product.save()
-
-        //     let basic = await Box.findById("624602839b74b6f206a7590d")
-        //     basic.inventory -= basicBoxes;
-        //     await basic.save()
-
-        //     let premium = await Box.findById("624738f4d7b5f4b99197937d")
-        //     premium.inventory -= premiumBoxes;
-        //     await premium.save()
-        // }
-            
-        // updateInventory(productID, qtyProcessed, basicBoxes, premiumBoxes)
-        
+        req.body.createdBy = req.user.username;        
         const newInventoryPost = await InventoryPost.create(req.body);
         return res.status(StatusCodes.OK).json({ data: newInventoryPost, msg: "Successfully submitted" });
     });
+
+//Get all based off of who is logged in
+router.route("/user")
+    .get(async (req, res) => {
+        const username = req.user.username
+        const inventoryPosts = await InventoryPost.find({createdBy: username});
+        return res.status(StatusCodes.OK).json({inventoryPosts});
+    })
 
 router.route("/export")
     .post(async (req, res) => {

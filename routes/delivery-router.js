@@ -14,7 +14,6 @@ const StatusCodes = require("http-status-codes");
 //const { findById } = require("../models/Admin");
 
 // Get/Post-----------------------------------------------------------------------------------------------------------
-
 router.route("/")
     .get(async (req, res) => {
         const deliveryTickets = await DeliveryTicket.find({});
@@ -50,6 +49,11 @@ router.route("/inventoryposts/:id")
 
 // Update/Delete-----------------------------------------------------------------------------------------------------------------------------
 router.route("/:id")
+    .get(async (req, res) => {
+        const { id } = req.params
+        const delivery = await DeliveryTicket.findById(id)
+        res.status(StatusCodes.OK).json({delivery})
+    })
     .patch(async (req, res) => {
         const { status, productsBoxed, deliveryID } = req.body
 
@@ -74,6 +78,24 @@ router.route("/:id")
         }
 
         updateInventory(productsBoxed)
+
+        const updateBoxes = async (products) => {
+            for (let i = 0; i < products.length; i++) {
+                let product = products[i]
+
+                let temp = await Box.find({name: "Premium"});
+                let premium = temp[0];
+                premium.inventory -= product.premiumBoxes;
+                await premium.save();
+
+                let temp2 = await Box.find({name: "Basic"});
+                let basic = temp2[0];
+                basic.inventory -= product.basicBoxes;
+                await basic.save();  
+            }
+        }
+
+        updateBoxes(productsBoxed)
 
         return res.status(StatusCodes.OK).send('closed')
     })

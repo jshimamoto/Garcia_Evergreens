@@ -13,7 +13,8 @@ const StatusCodes = require("http-status-codes");
 //Get and Post -------------------------------------------------------------------------------------------------
 router.route('/')
 	.get( async (req,res) => {
-		console.log("get route")
+		const invoices = await Invoice.find({})
+		res.status(StatusCodes.OK).json({invoices})
 	})
 	.post( async (req,res) => {
 		req.body.createdBy = req.user.username;

@@ -13,10 +13,12 @@ const StatusCodes = require("http-status-codes");
 
 //Get Employees -------------------------------------------------------------------------------------------------------
 router.route("/")
+    //Get all employees
     .get(async (req, res) => {
         const employees = await Employee.find({});
         return res.status(StatusCodes.OK).json({ employees });
     })
+    //Create an employee
     .post(async (req, res) => {
         req.body.createdBy = req.user.userID;
         const newEmployee = await Employee.create(req.body);
@@ -80,6 +82,7 @@ router.route("/profile/employee")
         return res.status(StatusCodes.OK).send('updated successfully')
     })
 
+//Get a specific employee for their overview page
 router.route("/employee/:id")
     .get(async (req, res) => {
         const { id: employeeID } = req.params;
