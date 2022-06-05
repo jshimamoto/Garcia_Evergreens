@@ -33,14 +33,8 @@ router.route('/:id')
 		return res.status(StatusCodes.OK).json({product})
 	})
 	.patch(async (req, res) => {
-		const {
-			body: {name, notes},
-			user: {username},
-			params: {id: productID}
-		} = req;
-		if (name === '') {
-			throw new BadRequestError('Please fill out all required fields')
-		}
+		const { premiumBoxes, basicBoxes, notes, productID} = req.body;
+
 		const product = await Product.findByIdAndUpdate(
 			{_id: productID},
 			req.body,
@@ -52,7 +46,7 @@ router.route('/:id')
 		return res.status(StatusCodes.OK).json({product})
 	})
 	.delete(async (req,res) => {
-		const {user: {username}, params: {id: productID}} = req;
+		const { productID } = req.body;
 		const product = await Product.findByIdAndDelete({_id: productID})
 		if (!product) {
 			throw new BadRequestError(`No product with ID ${productID}`)

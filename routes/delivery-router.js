@@ -11,7 +11,6 @@ const Box = require('../models/Box')
 const BadRequestError = require("../errors/bad-request");
 const UnauthenticatedError = require("../errors/auth-error");
 const StatusCodes = require("http-status-codes");
-//const { findById } = require("../models/Admin");
 
 // Get/Post-----------------------------------------------------------------------------------------------------------
 router.route("/")
@@ -25,6 +24,7 @@ router.route("/")
         return res.status(StatusCodes.OK).json({ data: newDeliveryTicket, msg: "Successfully submitted" });
     });
 
+//Gets all inventory posts associated with the delivery ticket
 router.route("/inventoryposts/:id")
     .get(async (req, res) => {
         const {id: deliveryID} = req.params
@@ -47,13 +47,16 @@ router.route("/inventoryposts/:id")
 //         res.status(StatusCodes.OK).send("success")
 //     })
 
-// Update/Delete-----------------------------------------------------------------------------------------------------------------------------
+//Get specific ticket
 router.route("/:id")
     .get(async (req, res) => {
         const { id } = req.params
         const delivery = await DeliveryTicket.findById(id)
         res.status(StatusCodes.OK).json({delivery})
     })
+
+// Close Ticket-----------------------------------------------------------------------------------------------------------------------------
+router.route("/close/:id")
     .patch(async (req, res) => {
         const { status, productsBoxed, deliveryID } = req.body
 
@@ -100,5 +103,64 @@ router.route("/:id")
         return res.status(StatusCodes.OK).send('closed')
     })
 
+
+// Reopen Ticket-----------------------------------------------------------------------------------------------------------------------------
+router.route("/reopen/:id")
+    .patch(async (req, res) => {
+        const { status, productsBoxed, deliveryID } = req.body
+
+        const deliveryTicket = await DeliveryTicket.findByIdAndUpdate(
+            { _id: deliveryID },
+            {status},
+            { new: true, runValidators: true }
+            );
+
+        if (!deliveryID) {
+            throw new BadRequestError(`No delivery ticket with ID ${deliveryID}`);
+        }
+
+        const updateInventory = async (products) => {
+            for (let i = 0; i < products.length; i++) {
+                let temp = await Product.find({name: products[i].name})
+                let product = temp[0]
+                product.premiumBoxes = product.premiumBoxes - products[i].premiumBoxes;
+                product.basicBoxes = product.basicBoxes - products[i].basicBoxes;
+                await product.save();
+            }
+        }
+
+        updateInventory(productsBoxed)
+
+        const updateBoxes = async (products) => {
+            for (let i = 0; i < products.length; i++) {
+                let product = products[i]
+
+                let temp = await Box.find({name: "Premium"});
+                let premium = temp[0];
+                premium.inventory += product.premiumBoxes;
+                await premium.save();
+
+                let temp2 = await Box.find({name: "Basic"});
+                let basic = temp2[0];
+                basic.inventory += product.basicBoxes;
+                await basic.save();  
+            }
+        }
+
+        updateBoxes(productsBoxed)
+
+        return res.status(StatusCodes.OK).send('closed')
+    })
+
+// Delete Ticket-----------------------------------------------------------------------------------------------------------------------------
+router.route("/delete/:id")
+    .delete(async (req, res) => {
+        const { deliveryID } = req.body
+        const deliveryTicket = await DeliveryTicket.findByIdAndDelete({_id: deliveryID})
+        if (!deliveryTicket) {
+            throw new BadRequestError(`No ticket with ID ${deliveryID}`)
+        }
+        return res.status(StatusCodes.OK).send('Product successfully removed')
+    })
     
 module.exports = router;

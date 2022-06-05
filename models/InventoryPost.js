@@ -9,6 +9,10 @@ const InventoryPostSchema = new mongoose.Schema({
         type: mongoose.ObjectId,
         required: [true, "Post must be linked to a delivery ticket"]
     },
+    boxedBy: {
+        type: String,
+        required: [true, "Must input who boxed this post"]
+    },
     products: {
         type: Array,
         required: [true, "Please provide the product name for this inventory post"]

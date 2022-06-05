@@ -93,6 +93,14 @@ router.route("/employee/:id")
         return res.status(StatusCodes.OK).json({ employee });
     })
 
+//Get all employees and admins
+router.route("/getall")
+    .get(async (req, res) => {
+        const employees = await Employee.find();
+        const admins = await Admin.find();
+        return res.status(StatusCodes.OK).json({employees: employees, admins: admins})
+    })
+
 
 //Employee Inventory Posts------------------------------------------------------------------------------------
 router.route("/inventory/:id")
