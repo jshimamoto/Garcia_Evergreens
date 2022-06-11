@@ -59,47 +59,10 @@ router.route("/:id")
         }
         return res.status(StatusCodes.OK).json({ inventory });
     })
-    // Patch-----------------------------------------------------------------------------------------
-    .patch(async (req, res) => {
-        const {
-            body: {
-                supplier,
-                product,
-                productID,
-                qtyReceived,
-                qtyProcessed,
-                lostProduct,
-                premiumBoxes,
-                basicBoxes,
-                totalBoxes,
-                notes,
-                deltas
-            },
-            user: { userID },
-            params: { id: inventoryID },
-        } = req;
-        
-        if (supplier === "" || product === "" || productID === "" || qtyReceived === "" || qtyProcessed === "" || lostProduct === "" || premiumBoxes === "" || basicBoxes === "" || totalBoxes === "") {
-            throw new BadRequestError("Please fill out all required fields");
-        }
+    // Patch
+    .patch(async (req,res) => {
+        const { id: inventoryID } = req.body
 
-        const updateInventory = async (productID, newQty, basicBoxesDelta, premiumBoxesDelta) => {
-            let product = await Product.findById(productID);
-            product.pendingInventory += newQty;
-            product.inventory -= newQty
-            await product.save()
-
-            let basic = await Box.findById("624602839b74b6f206a7590d")
-            basic.inventory += basicBoxesDelta;
-            await basic.save()
-
-            let premium = await Box.findById("624738f4d7b5f4b99197937d")
-            premium.inventory += premiumBoxesDelta;
-            await premium.save()
-        }
-
-        updateInventory(productID, qtyProcessed, deltas.premiumBoxesDelta, deltas.basicBoxesDelta)
-        req.body.status = "submitted"
         const inventory = await InventoryPost.findByIdAndUpdate(
             { _id: inventoryID },
             req.body,
@@ -108,47 +71,16 @@ router.route("/:id")
         if (!inventory) {
             throw new BadRequestError(`No inventory post with ID ${inventoryID}`);
         }
-        return res.status(StatusCodes.OK).json({ inventory });
+        return res.status(StatusCodes.OK).send("updated");
     })
-    // Delete-----------------------------------------------------------------------------------
-    .delete(async (req, res) => {
-        const {
-            body:{
-                productID,
-                qtyProcessed,
-                premiumBoxes,
-                basicBoxes,
-                status
-            },
-            user: { userID },
-            params: {id}
-        } = req;
-
-        const updateInventory = async (productID, qtyDelta, basicBoxes, premiumBoxes) => {
-            let product = await Product.findById(productID);
-            if (status === "submitted") {
-                product.pendingInventory -= qtyDelta;
-            } else {
-                product.inventory -= qtyDelta
-            }
-            await product.save()
-
-            let basic = await Box.findById("624602839b74b6f206a7590d")
-            basic.inventory += basicBoxes;
-            await basic.save()
-
-            let premium = await Box.findById("624738f4d7b5f4b99197937d")
-            premium.inventory += premiumBoxes;
-            await premium.save()
+    // Delete
+    .delete(async (req, res) => {       
+        const { inventoryID } = req.body
+        const inventoryPost = await InventoryPost.findByIdAndDelete({_id: inventoryID})
+        if (!inventoryPost) {
+            throw new BadRequestError(`No ticket with ID ${inventoryID}`)
         }
-
-        updateInventory(productID, qtyProcessed, basicBoxes, premiumBoxes)
-
-        const inventory = await InventoryPost.findByIdAndDelete({_id: id});
-        if (!inventory) {
-            throw new BadRequestError(`No inventory post with ID ${inventoryID}`);
-        }
-        return res.status(StatusCodes.OK).send("Inventory Post successfully removed");
+        return res.status(StatusCodes.OK).send('Product successfully removed')
     });
 
 // Approve-----------------------------------------------------------------------------------------------------------

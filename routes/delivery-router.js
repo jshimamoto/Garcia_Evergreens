@@ -152,6 +152,25 @@ router.route("/reopen/:id")
         return res.status(StatusCodes.OK).send('closed')
     })
 
+// Edit Ticket-----------------------------------------------------------------------------------------------------------------------------
+router.route("/edit/:id")
+    .patch(async (req, res) => {
+        const { deliveryID, supplier, landOrigin, products, dateReceived, notes } = req.body
+
+        const deliveryTicket = await DeliveryTicket.findByIdAndUpdate(
+            { _id: deliveryID },
+            {
+                supplier,
+                products,
+                landOrigin,
+                dateReceived,
+                notes
+            },
+            { new: true, runValidators: true }
+            );
+        return res.status(StatusCodes.OK).send('closed')
+    })
+
 // Delete Ticket-----------------------------------------------------------------------------------------------------------------------------
 router.route("/delete/:id")
     .delete(async (req, res) => {
