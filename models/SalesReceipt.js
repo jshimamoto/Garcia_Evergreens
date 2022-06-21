@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const InvoiceSchema = new mongoose.Schema({
+const SalesReceiptSchema = new mongoose.Schema({
 	customer: {
 		type: String,
 		required: [true, 'Please provide a customer for this invoice']
@@ -21,4 +21,4 @@ const InvoiceSchema = new mongoose.Schema({
 	}
 }, {timestamps:true});
 
-module.exports = mongoose.model('Invoice', InvoiceSchema)
+module.exports = mongoose.model('SalesReceipt', SalesReceiptSchema)

@@ -32,6 +32,17 @@ router.route("/inventoryposts/:id")
         return res.status(StatusCodes.OK).json({inventoryPosts});
     })
 
+router.route("/open")
+    .get(async (req, res) => {
+        const deliveryTickets = await DeliveryTicket.find({status: "open"});
+        return res.status(StatusCodes.OK).json({deliveryTickets});
+    })
+    .post(async (req, res) => {
+        req.body.createdBy = req.user.username;
+        const newDeliveryTicket = await DeliveryTicket.create(req.body);
+        return res.status(StatusCodes.OK).json({ data: newDeliveryTicket, msg: "Successfully submitted" });
+    });
+
 // router.route("/export")
 //     .post(async (req, res) => {
 //         const exports = req.body.data;
