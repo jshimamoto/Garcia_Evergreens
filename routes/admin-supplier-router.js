@@ -11,6 +11,7 @@ const UnauthenticatedError = require('../errors/auth-error')
 
 const StatusCodes = require('http-status-codes')
 
+//Get/Post -------------------------------------------------------------------------------------------------------------------------------
 router.route('/')
 	.get(async (req, res) => {
         const suppliers = await Supplier.find({})
@@ -20,6 +21,14 @@ router.route('/')
         req.body.createdBy = req.user.username
         const newSupplier = await Supplier.create(req.body);
         return res.status(StatusCodes.OK).json({data: newSupplier, msg: "Successfully submitted"})
+    })
+
+//Get Supplier-------------------------------------------------------------------------------------------------------------------------------
+router.route('/:id')
+    .get(async (req, res) => {
+        const { supplierID: id } = req.query
+        const supplier = await Supplier.findById(id)
+        return res.status(StatusCodes.OK).json({supplier})
     })
 
 module.exports = router;

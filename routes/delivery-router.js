@@ -37,34 +37,24 @@ router.route("/open")
         const deliveryTickets = await DeliveryTicket.find({status: "open"});
         return res.status(StatusCodes.OK).json({deliveryTickets});
     })
-    .post(async (req, res) => {
-        req.body.createdBy = req.user.username;
-        const newDeliveryTicket = await DeliveryTicket.create(req.body);
-        return res.status(StatusCodes.OK).json({ data: newDeliveryTicket, msg: "Successfully submitted" });
-    });
-
-// router.route("/export")
-//     .post(async (req, res) => {
-//         const exports = req.body.data;
-//         const updateStatus = async (array) => {
-//             for (let i = 0; i < array.length; i++) {
-//                 let post = await InventoryPost.findById(array[i])
-//                 post.status = "completed"
-//                 await post.save()
-//             }
-//         }
-
-//         updateStatus(exports)
-//         res.status(StatusCodes.OK).send("success")
-//     })
 
 //Get specific ticket
 router.route("/:id")
     .get(async (req, res) => {
-        const { id } = req.params
+        const { id: id } = req.params
         const delivery = await DeliveryTicket.findById(id)
         res.status(StatusCodes.OK).json({delivery})
     })
+
+
+//Get w/ params
+router.route("/filter")
+    .get(async (req, res) => {
+        const { query } = req.query
+        const deliveryTickets = await DeliveryTicket.find({params})
+        res.status(StatusCodes.OK).json({deliveryTickets})
+    })
+
 
 // Close Ticket-----------------------------------------------------------------------------------------------------------------------------
 router.route("/close/:id")
