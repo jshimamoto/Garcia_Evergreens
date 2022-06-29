@@ -24,18 +24,18 @@ router.route("/")
         return res.status(StatusCodes.OK).json({ data: newDeliveryTicket, msg: "Successfully submitted" });
     });
 
-//Gets all inventory posts associated with the delivery ticket
-router.route("/inventoryposts/:id")
-    .get(async (req, res) => {
-        const {id: deliveryID} = req.params
-        const inventoryPosts = await InventoryPost.find({deliveryTicket: deliveryID});
-        return res.status(StatusCodes.OK).json({inventoryPosts});
-    })
+// router.route("/open")
+//     .get(async (req, res) => {
+//         const deliveryTickets = await DeliveryTicket.find({status: "open"});
+//         return res.status(StatusCodes.OK).json({deliveryTickets});
+//     })
 
-router.route("/open")
+//Get w/ filters
+router.route("/filter")
     .get(async (req, res) => {
-        const deliveryTickets = await DeliveryTicket.find({status: "open"});
-        return res.status(StatusCodes.OK).json({deliveryTickets});
+        const query = req.query
+        const deliveryTickets = await DeliveryTicket.find(query)
+        res.status(StatusCodes.OK).json({deliveryTickets})
     })
 
 //Get specific ticket
@@ -46,15 +46,13 @@ router.route("/:id")
         res.status(StatusCodes.OK).json({delivery})
     })
 
-
-//Get w/ params
-router.route("/filter")
+//Gets all inventory posts associated with the delivery ticket
+router.route("/inventoryposts/:id")
     .get(async (req, res) => {
-        const { query } = req.query
-        const deliveryTickets = await DeliveryTicket.find({params})
-        res.status(StatusCodes.OK).json({deliveryTickets})
+        const {id: deliveryID} = req.params
+        const inventoryPosts = await InventoryPost.find({deliveryTicket: deliveryID});
+        return res.status(StatusCodes.OK).json({inventoryPosts});
     })
-
 
 // Close Ticket-----------------------------------------------------------------------------------------------------------------------------
 router.route("/close/:id")

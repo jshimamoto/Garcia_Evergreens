@@ -26,7 +26,7 @@ router.route('/')
 //Get Supplier-------------------------------------------------------------------------------------------------------------------------------
 router.route('/:id')
     .get(async (req, res) => {
-        const { supplierID: id } = req.query
+        const { id } = req.params
         const supplier = await Supplier.findById(id)
         return res.status(StatusCodes.OK).json({supplier})
     })
