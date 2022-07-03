@@ -30,5 +30,21 @@ router.route('/:id')
         const supplier = await Supplier.findById(id)
         return res.status(StatusCodes.OK).json({supplier})
     })
+    .patch(async (req, res) => {
+        const { id } = req.params
+        const data = req.body;
+
+        const supplier = await Supplier.findByIdAndUpdate(
+            { _id: id },
+            {...data},
+            { new: true, runValidators: true }
+            );
+
+        if (!id) {
+            throw new BadRequestError(`No supplier with ID ID ${id}`);
+        }
+
+        return res.status(StatusCodes.OK).send("updated successfully")
+    })
 
 module.exports = router;

@@ -31,7 +31,7 @@ router.route('/')
 			}
 		}
 
-		updateInventory(products)
+		await updateInventory(products)
 
 		return res.status(StatusCodes.OK).send("created")
 	})

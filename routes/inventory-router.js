@@ -29,7 +29,8 @@ router.route("/")
 router.route("/user")
     .get(async (req, res) => {
         const username = req.user.username
-        const inventoryPosts = await InventoryPost.find({createdBy: username});
+        const query = req.query
+        const inventoryPosts = await InventoryPost.find({boxedBy: username, ...query});
         return res.status(StatusCodes.OK).json({inventoryPosts});
     })
 
@@ -40,20 +41,6 @@ router.route("/filter")
         const inventoryPosts = await InventoryPost.find(query)
         res.status(StatusCodes.OK).json({inventoryPosts})
     })
-// router.route("/export")
-//     .post(async (req, res) => {
-//         const exports = req.body.data;
-//         const updateStatus = async (array) => {
-//             for (let i = 0; i < array.length; i++) {
-//                 let post = await InventoryPost.findById(array[i])
-//                 post.status = "completed"
-//                 await post.save()
-//             }
-//         }
-
-//         updateStatus(exports)
-//         res.status(StatusCodes.OK).send("success")
-//     })
 
 // Update/Delete-----------------------------------------------------------------------------------------------------------------------------
 router.route("/:id")

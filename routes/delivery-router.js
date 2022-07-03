@@ -24,12 +24,6 @@ router.route("/")
         return res.status(StatusCodes.OK).json({ data: newDeliveryTicket, msg: "Successfully submitted" });
     });
 
-// router.route("/open")
-//     .get(async (req, res) => {
-//         const deliveryTickets = await DeliveryTicket.find({status: "open"});
-//         return res.status(StatusCodes.OK).json({deliveryTickets});
-//     })
-
 //Get w/ filters
 router.route("/filter")
     .get(async (req, res) => {
@@ -38,20 +32,20 @@ router.route("/filter")
         res.status(StatusCodes.OK).json({deliveryTickets})
     })
 
+//Get all based off of who is logged in
+router.route("/user")
+    .get(async (req, res) => {
+        const username = req.user.username
+        const deliveryTickets = await DeliveryTicket.find({createdBy: username});
+        return res.status(StatusCodes.OK).json({deliveryTickets});
+    })
+
 //Get specific ticket
 router.route("/:id")
     .get(async (req, res) => {
         const { id: id } = req.params
         const delivery = await DeliveryTicket.findById(id)
         res.status(StatusCodes.OK).json({delivery})
-    })
-
-//Gets all inventory posts associated with the delivery ticket
-router.route("/inventoryposts/:id")
-    .get(async (req, res) => {
-        const {id: deliveryID} = req.params
-        const inventoryPosts = await InventoryPost.find({deliveryTicket: deliveryID});
-        return res.status(StatusCodes.OK).json({inventoryPosts});
     })
 
 // Close Ticket-----------------------------------------------------------------------------------------------------------------------------
