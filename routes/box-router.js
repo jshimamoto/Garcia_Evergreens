@@ -51,31 +51,27 @@ router.route('/inventory/new')
 // Get and Modify Box----------------------------------------------------------------------------------------------------------
 router.route('/:id')
 	.get(async (req, res) => {
-		const {id: productID} = req.params
-		const product = await Product.findOne({_id: productID})
-		if (!product) {
+		const {id: boxID} = req.params
+		const box = await Box.findById(boxID)
+		if (!box) {
 			throw new BadRequestError('Product does not exist')
 		}
-		return res.status(StatusCodes.OK).json({product})
+		return res.status(StatusCodes.OK).json({box})
 	})
 	.patch(async (req, res) => {
-		const {
-			body: {name, notes},
-			admin: {adminID},
-			params: {id: productID}
-		} = req;
-		if (name === '') {
-			throw new BadRequestError('Please fill out all required fields')
-		}
-		const product = await Product.findByIdAndUpdate(
-			{_id: productID},
+		const { id: boxID } = req.params
+		
+		const box = await Box.findByIdAndUpdate(
+			{_id: boxID},
 			req.body,
 			{new: true, runValidators: true}
 			)
-		if (!product) {
-			throw new BadRequestError(`No product with ID ${productID}`)
+
+		if (!box) {
+			throw new BadRequestError(`No box with ID ${boxID}`)
 		}
-		return res.status(StatusCodes.OK).json({product})
+
+		return res.status(StatusCodes.OK).json({box})
 	})
 	.delete(async (req,res) => {
 		const {admin: {adminID}, params: {id: productID}} = req;

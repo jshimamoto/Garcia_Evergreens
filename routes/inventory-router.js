@@ -80,22 +80,18 @@ router.route("/:id")
 // Approve-----------------------------------------------------------------------------------------------------------
 router.route('/approve/:id')
     .patch(async (req,res) => {
-        const {
-            body: {
-                status
-            },
-            user: { userID },
-            params: { id: inventoryID },
-        } = req;
+        const { id } = req.params
 
         const inventory = await InventoryPost.findByIdAndUpdate(
-            { _id: inventoryID },
+            { _id: id },
             req.body,
             { new: true, runValidators: true }
             );
+
         if (!inventory) {
-            throw new BadRequestError(`No inventory post with ID ${inventoryID}`);
+            throw new BadRequestError(`No inventory post with ID ${id}`);
         }
+
         return res.status(StatusCodes.OK).json({ inventory });
     })
 
