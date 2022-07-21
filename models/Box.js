@@ -4,6 +4,7 @@ const BoxSchema = new mongoose.Schema( {
 	name: {
 		type: String,
 		required: [true, 'Please provide box type.'],
+		unique: true
 	},
 	inventory: {
 		type: Number,

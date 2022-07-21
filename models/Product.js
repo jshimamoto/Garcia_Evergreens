@@ -9,15 +9,15 @@ const ProductSchema = new mongoose.Schema({
 		type: Number,
 		required: [true, 'Please provide the number of bunches per box']
 	},
-	premiumBoxes: {
-		type: Number,
+	boxes: {
+		type: Array,
 		required: [true, 'Please provide initial inventory'],
-		default: 0
+		default: []
 	},
-	basicBoxes: {
-		type: Number,
+	inventory: {
+		type: Array,
 		required: [true, 'Please provide initial inventory'],
-		default: 0
+		default: []
 	},
 	notes: {
 		type: String,

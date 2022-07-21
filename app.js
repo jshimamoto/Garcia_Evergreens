@@ -5,9 +5,9 @@ const path = require("path");
 
 //Security
 const cors = require("cors");
-const helmet = require("helmet")
-const rateLimit = require('express-rate-limit')
-const xss = require('xss-clean')
+// const helmet = require("helmet")
+// const rateLimit = require('express-rate-limit')
+// const xss = require('xss-clean')
 
 const adminRouter = require("./routes/admin-router");
 const deliveryRouter = require("./routes/delivery-router")
