@@ -21,14 +21,19 @@ router.route('/')
 		if (!email || !password) {
 			throw new BadRequestError('Please provide email and password');
 		}
+
 		const admin = await Admin.findOne({email})
+
 		if (!admin) {
 			throw new UnauthenticatedError('Invalid credentials')
 		}
+
 		const isPasswordCorrect = await admin.comparePassword(password)
+
 		if (!isPasswordCorrect) {
 			throw new UnauthenticatedError('Invalid credentials')
 		}
+
 		const token = admin.createJWT();
 		return res.status(StatusCodes.OK).json({admin: {username: admin.username, id: admin._id}, token})
 	})

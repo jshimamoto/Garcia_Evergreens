@@ -14,7 +14,7 @@ const StatusCodes = require("http-status-codes");
 router.route('/')
 	.get( async (req,res) => {
 		const salesReceipts = await SalesReceipt.find({})
-		res.status(StatusCodes.OK).json({invoices})
+		res.status(StatusCodes.OK).json({salesReceipts})
 	})
 	.post( async (req,res) => {
 		req.body.createdBy = req.user.username;

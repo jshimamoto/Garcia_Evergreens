@@ -93,6 +93,16 @@ router.route("/employee/:id")
         return res.status(StatusCodes.OK).json({ employee });
     })
 
+router.route("/admin/:id")
+    .get(async (req, res) => {
+        const { id: adminID } = req.params;
+        const admin = await Admin.findById(adminID);
+        if (!admin) {
+            throw new BadRequestError("Admin does not exist");
+        }
+        return res.status(StatusCodes.OK).json({ admin });
+    })
+
 //Get all employees and admins
 router.route("/getall")
     .get(async (req, res) => {
